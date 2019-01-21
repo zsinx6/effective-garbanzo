@@ -73,11 +73,15 @@ WSGI_APPLICATION = 'olist.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
+DBUSER = os.environ.get('DBUSER')
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'olist',
+        'USER': DBUSER,
+        'HOST': 'localhost',
+        'PORT': '5432'
     }
 }
 
