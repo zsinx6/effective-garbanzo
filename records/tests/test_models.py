@@ -1,59 +1,96 @@
 from django.utils import timezone
 from django.core.exceptions import ValidationError
 
-from records.exceptions import CallIdDuplicationError, InvalidDateError, InvalidPhoneNumberError
-from records.models import CallRecord
+from factories import StartCallRecordFactory, EndCallRecordFactory
+from records.exceptions import (CallIdDuplicationError, InvalidDateIntervalError,
+                                SourceEqualsDestinationError, StartEndError)
 
 import pytest
+import datetime
 
 
 pytestmark = pytest.mark.django_db
 
 
 def test_source_eq_destination():
-    bad_record = CallRecord(type="start", timestamp=timezone.now(),
-                            call_id=1, source="11989686511", destination="11989686511")
-    with pytest.raises(InvalidPhoneNumberError):
-        bad_record.save()
+    with pytest.raises(SourceEqualsDestinationError):
+        StartCallRecordFactory(source="1111111111", destination="1111111111")
 
 
 def test_start_source():
-    bad_record = CallRecord(type="start", timestamp=timezone.now(),
-                            call_id=1, source="11989686511")
-    with pytest.raises(InvalidPhoneNumberError):
-        bad_record.save()
+    with pytest.raises(StartEndError):
+        StartCallRecordFactory(source=None)
 
 
 def test_start_destination():
-    bad_record = CallRecord(type="start", timestamp=timezone.now(),
-                            call_id=1, destination="11989686511")
-    with pytest.raises(InvalidPhoneNumberError):
-        bad_record.save()
+    with pytest.raises(StartEndError):
+        StartCallRecordFactory(destination=None)
 
 
 def test_start_no_phone():
-    bad_record = CallRecord(type="start", timestamp=timezone.now(),
-                            call_id=1)
-    with pytest.raises(InvalidPhoneNumberError):
-        bad_record.save()
+    with pytest.raises(StartEndError):
+        StartCallRecordFactory(source=None, destination=None)
 
 
 def test_start():
-    record = CallRecord(type="start", timestamp=timezone.now(),
-                        call_id=1, source="16989686518", destination="11989686511")
-    with pytest.raises(InvalidPhoneNumberError):
-        record.save()
+    assert StartCallRecordFactory()
 
 
 def test_end_source():
-    bad_record = CallRecord(type="start", timestamp=timezone.now(),
-                            call_id=1, source="11989686511")
-    with pytest.raises(InvalidPhoneNumberError):
-        bad_record.save()
+    with pytest.raises(StartEndError):
+        EndCallRecordFactory(source="1111111111")
 
 
 def test_end_destination():
-    bad_record = CallRecord(type="start", timestamp=timezone.now(),
-                            call_id=1, destination="11989686511")
-    with pytest.raises(InvalidPhoneNumberError):
-        bad_record.save()
+    with pytest.raises(StartEndError):
+        EndCallRecordFactory(destination="1111111111")
+
+
+def test_end():
+    assert EndCallRecordFactory()
+
+
+def test_invalid_phone_number_alpha():
+    with pytest.raises(ValidationError):
+        StartCallRecordFactory(source="this is not a number")
+
+
+def test_invalid_phone_number_short():
+    with pytest.raises(ValidationError):
+        StartCallRecordFactory(source="123")
+
+
+def test_invalid_phone_number_long():
+    with pytest.raises(ValidationError):
+        StartCallRecordFactory(source="123456789123456789")
+
+
+def test_duplicate_call_id():
+    StartCallRecordFactory()
+    EndCallRecordFactory()
+    with pytest.raises(CallIdDuplicationError):
+        StartCallRecordFactory()
+
+
+def test_duplicate_start_call_id():
+    StartCallRecordFactory(call_id=1)
+    with pytest.raises(CallIdDuplicationError):
+        StartCallRecordFactory(call_id=1)
+
+
+def test_duplicate_end_call_id():
+    EndCallRecordFactory(call_id=1)
+    with pytest.raises(CallIdDuplicationError):
+        EndCallRecordFactory(call_id=1)
+
+
+def test_end_date_before_start():
+    EndCallRecordFactory()
+    with pytest.raises(InvalidDateIntervalError):
+        StartCallRecordFactory(timestamp=timezone.now() + datetime.timedelta(days=1))
+
+
+def test_start_date_after_end():
+    StartCallRecordFactory(timestamp=timezone.now() + datetime.timedelta(days=1))
+    with pytest.raises(InvalidDateIntervalError):
+        EndCallRecordFactory()

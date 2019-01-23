@@ -5,9 +5,13 @@ class CallIdDuplicationError(ValidationError):
     pass
 
 
-class InvalidPhoneNumberError(ValidationError):
+class StartEndError(ValidationError):
     pass
 
 
-class InvalidDateError(ValidationError):
+class InvalidDateIntervalError(ValidationError):
+    pass
+
+
+class SourceEqualsDestinationError(ValidationError):
     pass

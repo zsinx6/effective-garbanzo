@@ -1,6 +1,7 @@
 from django.db import models
 from django.core.validators import RegexValidator
-from django.core.exceptions import ValidationError
+from records.exceptions import (CallIdDuplicationError, InvalidDateIntervalError,
+                                SourceEqualsDestinationError, StartEndError)
 
 
 class CallRecord(models.Model):
@@ -14,9 +15,9 @@ class CallRecord(models.Model):
                                  "always composed of two digits while the phone number can be "
                                  "composed of 8 or 9 digits.")
     source = models.CharField(max_length=11, validators=[phone_regex],
-                              null=True, default=None, blank=False)
+                              null=True, default=None, blank=True)
     destination = models.CharField(max_length=11, validators=[phone_regex],
-                                   null=True, default=None, blank=False)
+                                   null=True, default=None, blank=True)
 
     def check_date(self, other):
         if other.type == "start" and other.timestamp < self.timestamp:
@@ -26,18 +27,19 @@ class CallRecord(models.Model):
         return False
 
     def save(self, *args, **kwargs):
+        self.full_clean()
         if self.type == "start" and (not self.source or not self.destination):
-            raise ValidationError("Call Start Record must have source and destination")
+            raise StartEndError("Call Start Record must have source and destination")
         elif self.type == "end" and (self.source or self.destination):
-            raise ValidationError("Call End Record must not have source nor destination")
+            raise StartEndError("Call End Record must not have source nor destination")
         if self.source == self.destination and self.source:
-            raise ValidationError("Source must differ from destination.")
+            raise SourceEqualsDestinationError("Source must differ from destination.")
         other = CallRecord.objects.filter(call_id=self.call_id)
         count = other.count()
         if count == 1 and other.first().type == self.type:
-            raise ValidationError("Only one 'start' and 'end' for each call_id.")
+            raise CallIdDuplicationError("Only one 'start' and 'end' for each call_id.")
         elif count >= 2:
-            raise ValidationError("This call_id is already in use.")
+            raise CallIdDuplicationError("This call_id is already in use.")
         elif count == 1 and not self.check_date(other.first()):
-            raise ValidationError("Date interval is bad.")
+            raise InvalidDateIntervalError("Date interval is bad.")
         super(CallRecord, self).save(*args, **kwargs)
