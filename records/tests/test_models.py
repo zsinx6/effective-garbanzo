@@ -66,31 +66,36 @@ def test_invalid_phone_number_long():
 
 
 def test_duplicate_call_id():
-    StartCallRecordFactory()
-    EndCallRecordFactory()
+    assert StartCallRecordFactory()
+    assert EndCallRecordFactory()
     with pytest.raises(CallIdDuplicationError):
         StartCallRecordFactory()
 
 
 def test_duplicate_start_call_id():
-    StartCallRecordFactory(call_id=1)
+    assert StartCallRecordFactory(call_id=1)
     with pytest.raises(CallIdDuplicationError):
         StartCallRecordFactory(call_id=1)
 
 
 def test_duplicate_end_call_id():
-    EndCallRecordFactory(call_id=1)
+    assert EndCallRecordFactory(call_id=1)
     with pytest.raises(CallIdDuplicationError):
         EndCallRecordFactory(call_id=1)
 
 
 def test_end_date_before_start():
-    EndCallRecordFactory()
+    assert EndCallRecordFactory()
     with pytest.raises(InvalidDateIntervalError):
         StartCallRecordFactory(timestamp=timezone.now() + datetime.timedelta(days=1))
 
 
 def test_start_date_after_end():
-    StartCallRecordFactory(timestamp=timezone.now() + datetime.timedelta(days=1))
+    assert StartCallRecordFactory(timestamp=timezone.now() + datetime.timedelta(days=1))
     with pytest.raises(InvalidDateIntervalError):
         EndCallRecordFactory()
+
+
+def test_start_end_correct():
+    assert StartCallRecordFactory()
+    assert EndCallRecordFactory(timestamp=timezone.now() + datetime.timedelta(days=1))
