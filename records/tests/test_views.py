@@ -1,14 +1,9 @@
-from django.utils import timezone
-from django.core.exceptions import ValidationError
 from rest_framework.reverse import reverse
 import decimal
 
 from bills.models import BillInformation
 from pricing_rules import standing_charge, charge_22_6, charge_6_22
-from records.exceptions import (CallIdDuplicationError, InvalidDateIntervalError,
-                                SourceEqualsDestinationError, StartEndError)
 import pytest
-import datetime
 
 pytestmark = pytest.mark.django_db
 
