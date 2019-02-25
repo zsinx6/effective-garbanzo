@@ -4,7 +4,6 @@ from django.core.exceptions import ValidationError
 from factories import StartCallRecordFactory, EndCallRecordFactory
 from records.exceptions import (CallIdDuplicationError, InvalidDateIntervalError,
                                 SourceEqualsDestinationError, StartEndError)
-
 import pytest
 import datetime
 

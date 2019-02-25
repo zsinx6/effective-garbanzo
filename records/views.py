@@ -20,7 +20,6 @@ class CallRecordViewSet(mixins.CreateModelMixin,
         if other_call_id.count() == 2:
             start_call = other_call_id.get(type="start")
             end_call = other_call_id.get(type="end")
-            destination_number = end_call.destination
             start_timestamp = start_call.timestamp
             end_timestamp = end_call.timestamp
-            BillInformation.objects.create(destination=destination_number, start=start_timestamp, end=end_timestamp)
+            BillInformation.objects.create(destination=end_call, source=start_call, start=start_timestamp, end=end_timestamp)

@@ -1,10 +1,7 @@
-from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from records import views
 
 router = DefaultRouter()
-router.register(r'records', views.CallRecordViewSet)
+router.register(r'records', views.CallRecordViewSet, basename="records")
 
-urlpatterns = [
-    path('', include(router.urls)),
-]
+urlpatterns = router.urls

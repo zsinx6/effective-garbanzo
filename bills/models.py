@@ -1,4 +1,5 @@
 from django.db import models
+import decimal
 
 from records.models import CallRecord
 from bills.calculate import calculate_price
@@ -12,6 +13,7 @@ class BillInformation(models.Model):
     price = models.DecimalField(null=False, max_digits=19, decimal_places=2)
 
     def save(self, *args, **kwargs):
+        decimal.getcontext().prec = 2
+        self.price = decimal.Decimal(calculate_price(self.start, self.end))
         self.full_clean()
-        self.price = calculate_price(self.start, self.end)
         super(BillInformation, self).save(*args, **kwargs)
