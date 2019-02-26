@@ -12,7 +12,7 @@ class BillInformation(models.Model):
     price = models.DecimalField(null=False, max_digits=19, decimal_places=2)
 
     def save(self, *args, **kwargs):
-        decimal.getcontext().prec = 2
-        self.price = decimal.Decimal(calculate_price(self.start, self.end))
+        decimal.getcontext().prec = 19
+        self.price = calculate_price(self.start, self.end)
         self.full_clean()
         super(BillInformation, self).save(*args, **kwargs)

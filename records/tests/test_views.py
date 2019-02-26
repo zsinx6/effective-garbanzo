@@ -9,13 +9,13 @@ pytestmark = pytest.mark.django_db
 
 def test_bill_calculation_response_single(client):
     start = {"type": "start",
-             "timestamp": "2018-02-22T21:59:00-03:00",
+             "timestamp": "2018-02-22T21:59:00Z",
              "call_id": 10,
              "source": "1888888888",
              "destination": "1688888888"}
 
     end = {"type": "end",
-           "timestamp": "2018-02-22T22:01:00-03:00",
+           "timestamp": "2018-02-22T22:01:00Z",
            "call_id": 10}
 
     response = client.post(reverse("records-list"), start)
@@ -69,10 +69,10 @@ def test_bill_calculation_response_2(client):
     assert response.status_code == 200
     bills = response.data["bills"]
     assert len(bills) == 2
-    assert bills[0]["price"] == "1.17"
+    assert bills[0]["price"] == str(standing_charge + 9 * (charge_6_22))
     assert bills[0]["duration"] == "0h9m45s"
     assert bills[0]["destination_number"] == "1688888888"
 
-    assert bills[1]["price"] == "0.36"
+    assert bills[1]["price"] == str(standing_charge + 6 * (charge_22_6))
     assert bills[1]["duration"] == "0h6m0s"
     assert bills[1]["destination_number"] == "1788888888"

@@ -5,15 +5,15 @@ from pricing_rules import standing_charge, charge_22_6, charge_6_22
 
 
 def calculate_price(start, end):
-    decimal.getcontext().prec = 3
-    cost = decimal.Decimal(standing_charge)
+    decimal.getcontext().prec = 19
+    cost = standing_charge
     temp_time = start
 
     if (end - temp_time).total_seconds() / 60 < 1:
         return cost
 
     while temp_time + datetime.timedelta(minutes=1) <= end:
-        if 6 <= temp_time.astimezone().hour < 22:
+        if 6 <= temp_time.hour < 22:
             cost += charge_6_22
         else:
             cost += charge_22_6
