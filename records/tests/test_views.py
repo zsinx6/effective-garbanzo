@@ -8,15 +8,15 @@ import pytest
 pytestmark = pytest.mark.django_db
 
 
-def test_bill_calculation_21_59_to_22_01(client):
+def test_bill_calculation_response_single(client):
     start = {"type": "start",
-             "timestamp": "2019-02-21T21:59:00-03:00",
+             "timestamp": "2018-02-22T21:59:00-03:00",
              "call_id": 10,
              "source": "1888888888",
              "destination": "1688888888"}
 
     end = {"type": "end",
-           "timestamp": "2019-02-21T22:01:00-03:00",
+           "timestamp": "2018-02-22T22:01:00-03:00",
            "call_id": 10}
 
     response = client.post(reverse("records-list"), start)
@@ -27,3 +27,10 @@ def test_bill_calculation_21_59_to_22_01(client):
 
     decimal.getcontext().prec = 2
     assert BillInformation.objects.all()[0].price == decimal.Decimal(standing_charge + charge_6_22 + charge_22_6)
+
+    response = client.get(reverse("bills-list"), {"source": "1888888888", "month": "2", "year": "2018"})
+    assert response.status_code == 200
+    bills = response.data["bills"][0]
+    assert bills["destination_number"] == "1888888888"
+    assert bills["price"] == "0.45"
+    assert bills["duration"] == "0h2m0s"

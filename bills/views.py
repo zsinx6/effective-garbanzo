@@ -2,6 +2,7 @@ from rest_framework import viewsets
 from django.utils import timezone
 import datetime
 
+from records.models import CallRecord
 from bills.models import BillInformation
 from bills.serializers import BillInformationSerializer
 from rest_framework.response import Response
@@ -29,7 +30,7 @@ class BillInformationViewSet(viewsets.ReadOnlyModelViewSet):
         if (year > now.year) or (year == now.year and month >= now.month):
             return Response("only closed periods are permitted", 400)
         queryset = BillInformation.objects.all()
-        queryset = queryset.filter(source=source, end__year=year, end__month=month)
+        queryset = queryset.filter(source__source=source, end__year=year, end__month=month)
         serializer = BillInformationSerializer(queryset, many=True)
         billing = {"source": source,
                    "period": str(month) + "/" + str(year),
