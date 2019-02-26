@@ -1,6 +1,6 @@
 import decimal
 
-decimal.getcontext().prec = 2
-standing_charge = decimal.Decimal(0.36)
-charge_6_22 = decimal.Decimal(0.09)
-charge_22_6 = decimal.Decimal(0.00)
+decimal.getcontext().prec = 3
+standing_charge = decimal.Decimal("0.36")
+charge_6_22 = decimal.Decimal("0.09")
+charge_22_6 = decimal.Decimal("0.00")

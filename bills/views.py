@@ -2,7 +2,6 @@ from rest_framework import viewsets
 from django.utils import timezone
 import datetime
 
-from records.models import CallRecord
 from bills.models import BillInformation
 from bills.serializers import BillInformationSerializer
 from rest_framework.response import Response

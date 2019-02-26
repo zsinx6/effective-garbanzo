@@ -5,7 +5,7 @@ from pricing_rules import standing_charge, charge_22_6, charge_6_22
 
 
 def calculate_price(start, end):
-    decimal.getcontext().prec = 2
+    decimal.getcontext().prec = 3
     cost = decimal.Decimal(standing_charge)
     temp_time = start
 
