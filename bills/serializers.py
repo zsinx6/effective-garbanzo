@@ -16,4 +16,7 @@ class BillInformationSerializer(serializers.ModelSerializer):
         return calculate_duration_time(obj.start, obj.end)
 
     def get_destination_number(self, obj):
+        """The destination is obtained by checking the callrecord's destination
+        field.
+        """
         return obj.source.destination

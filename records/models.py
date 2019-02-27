@@ -20,6 +20,10 @@ class CallRecord(models.Model):
                                    null=True, default=None, blank=True)
 
     def check_date(self, other):
+        """Check if the add the dates are right, that is, the start is before
+        end.
+        """
+
         if other.type == "start" and other.timestamp < self.timestamp:
             return True
         elif other.type == "end" and other.timestamp > self.timestamp:
@@ -27,6 +31,10 @@ class CallRecord(models.Model):
         return False
 
     def save(self, *args, **kwargs):
+        """Before saving run various checks to make sure everything is within
+        the defined rules.
+        """
+
         self.full_clean()
         if self.type == "start" and (not self.source or not self.destination):
             raise StartEndError("Call Start Record must have source and destination")

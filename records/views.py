@@ -14,6 +14,11 @@ class CallRecordViewSet(mixins.CreateModelMixin,
     serializer_class = CallRecordSerializer
 
     def perform_create(self, serializer):
+        """Used to insert the BillInformation when there are 2 registers for
+        the same call_id. This is the only way for the end user to create a
+        BillInformation.
+        """
+
         call_id = self.request.data["call_id"]
         serializer.save()
         other_call_id = self.queryset.filter(call_id=call_id)
