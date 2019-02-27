@@ -38,6 +38,16 @@ def test_duration_time_various_days():
     assert duration == "77h16m55s"
 
 
+def test_price_calculation_less_1_minutes_6_22():
+    now = datetime.datetime.now()
+    start = now.replace(hour=15, minute=35, second=20)
+    end = start + datetime.timedelta(seconds=46)
+
+    price = calculate_price(start, end)
+
+    assert price == standing_charge
+
+
 def test_price_calculation_21_59_to_22_01():
     now = datetime.datetime.now()
     start = now.replace(hour=21, minute=59, second=0)

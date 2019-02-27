@@ -15,6 +15,7 @@ class BillInformationViewSet(viewsets.ReadOnlyModelViewSet):
         source = request.query_params.get("source")
         if not source:
             return Response("source is required", 400)
+
         month = request.query_params.get("month")
         year = request.query_params.get("year")
         now = timezone.now()
@@ -24,10 +25,12 @@ class BillInformationViewSet(viewsets.ReadOnlyModelViewSet):
             month, year = lastMonth.month, lastMonth.year
         else:
             month, year = int(month), int(year)
+
         if not 1 <= month <= 12:
             return Response("invalid month", 400)
         if (year > now.year) or (year == now.year and month >= now.month):
             return Response("only closed periods are permitted", 400)
+
         queryset = BillInformation.objects.all()
         queryset = queryset.filter(source__source=source, end__year=year, end__month=month)
         serializer = BillInformationSerializer(queryset, many=True)
