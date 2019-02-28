@@ -5,8 +5,8 @@ from pricing_rules import standing_charge, charge_22_6, charge_6_22
 
 
 def calculate_price(start, end):
-    """Receives a start and end timestamp and calculate the price using the
-    information in the pricing_rules.
+    """Receives the start and end times as timestamp, and calculates the price using the
+    information in pricing_rules.
     """
 
     decimal.getcontext().prec = 19
@@ -25,7 +25,7 @@ def calculate_price(start, end):
 
 def calculate_duration_time(start, end):
     """Calculates the duration in the format of <hours>h<minutes>m<seconds>s
-    given a start and end timestamp.
+    given start and end timestamps.
     """
 
     diff = end - start

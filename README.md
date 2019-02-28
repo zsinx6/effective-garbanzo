@@ -3,8 +3,9 @@
 ## [Heroku deploy](https://effective-garbanzo.herokuapp.com)
 
 ## Description
-This is a simple project for receive call records and calcule the billing information, based on some pricing rules, 
-for more information click [here](https://github.com/olist/work-at-olist).
+This is a simple project for receive call records and calculating the billing
+information, based on some pricing rules.
+For more information click [here](https://github.com/olist/work-at-olist).
 
 The code base is Python 3.6 with Django REST framework and Postgresql as database.
 
@@ -26,7 +27,7 @@ $ python manager.py runserver
 ```
 
 #### Testing
-For testing just run:
+For testing, just run:
 
 ```bash
 $ pytest
@@ -88,7 +89,7 @@ https://effective-garbanzo.herokuapp.com/bills/?source=1888888888&month=10&year=
 
 If there is no period information, the last month is used.
 
-The response is a json in the format:
+The response is a json in the following format:
 ```python
 {
     "source": "1888888888",
@@ -105,4 +106,4 @@ The response is a json in the format:
 }
 ```
 
-Where the bills are a array with every occurence of billing charge.
+The bills are a array with every occurrence of billing charge.

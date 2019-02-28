@@ -31,7 +31,7 @@ class CallRecord(models.Model):
         return False
 
     def save(self, *args, **kwargs):
-        """Before saving run various checks to make sure everything is within
+        """Before saving, run various checks to make sure everything is following
         the defined rules.
         """
 

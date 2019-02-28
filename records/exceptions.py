@@ -13,12 +13,12 @@ class CallIdDuplicationError(ValidationError):
 
 class StartEndError(ValidationError):
     """Used when the the start record does not have source and destination or
-    when the end record have source or destionation.
+    when the end record have source or destination.
     """
 
 
 class InvalidDateIntervalError(ValidationError):
-    """Used when the start date is later thant the end date in a record.
+    """Used when the start date is later than the end date in a record.
     """
 
 
