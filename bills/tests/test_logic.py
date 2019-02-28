@@ -38,6 +38,16 @@ def test_duration_time_various_days():
     assert duration == "77h16m55s"
 
 
+def test_price_calculation_less_1_minutes_22_6():
+    now = datetime.datetime.now()
+    start = now.replace(hour=15, minute=35, second=20)
+    end = start + datetime.timedelta(seconds=26)
+
+    price = calculate_price(start, end)
+
+    assert price == standing_charge
+
+
 def test_price_calculation_less_1_minutes_6_22():
     now = datetime.datetime.now()
     start = now.replace(hour=15, minute=35, second=20)
@@ -68,6 +78,16 @@ def test_price_calculation_05_59_to_06_01():
     assert price == standing_charge + charge_22_6 + charge_6_22
 
 
+def test_price_calculation_4_hours_6_22():
+    now = datetime.datetime.now()
+    start = now.replace(hour=16, minute=56, second=0)
+    end = start + datetime.timedelta(hours=4)
+
+    price = calculate_price(start, end)
+
+    assert price == standing_charge + (4 * 60 * charge_6_22)
+
+
 def test_price_calculation_various_days():
     now = datetime.datetime.now()
     start = now.replace(hour=0, minute=0, second=0)
@@ -75,4 +95,4 @@ def test_price_calculation_various_days():
 
     price = calculate_price(start, end)
 
-    assert price == standing_charge + (2 * 16 * 60 * charge_6_22) + (4 * 60 * charge_6_22) + (6 * charge_6_22)
+    assert price == standing_charge + (2 * 8 * 60 * charge_22_6) + (2 * 16 * 60 * charge_6_22) + (6 * 60 * charge_22_6) + (4 * 60 * charge_6_22) + (6 * charge_6_22)
