@@ -1,5 +1,6 @@
 from rest_framework.reverse import reverse
 import datetime
+import calendar
 from django.utils import timezone
 
 from pricing_rules import standing_charge, charge_22_6, charge_6_22
@@ -9,33 +10,44 @@ import pytest
 pytestmark = pytest.mark.django_db
 
 
-def bill_response_no_source(client):
+def test_bill_response_no_source(client):
     response = client.get(reverse("bills-list"), {"month": "2", "year": "2018"})
     assert response.status_code == 400
 
 
-def bill_response_invalid_month(client):
+def test_bill_response_invalid_source(client):
+    response = client.get(reverse("bills-list"), {"source": "abc"})
+    assert response.status_code == 400
+
+
+def test_bill_response_invalid_month(client):
     response = client.get(reverse("bills-list"), {"source": "1688888888", "month": "13", "year": "2018"})
     assert response.status_code == 400
 
 
-def bill_response_invalid_period_current_month(client):
+def test_bill_response_invalid_period_current_month(client):
     now = timezone.now()
     response = client.get(reverse("bills-list"), {"source": "1688888888", "month": str(now.month), "year": str(now.year)})
     assert response.status_code == 400
 
 
-def bill_response_invalid_period_future_month(client):
+def test_bill_response_invalid_period_future_month(client):
     now = timezone.now()
-    future = now + datetime.timedelta(months=1)
-    response = client.get(reverse("bills-list"), {"source": "1688888888", "month": str(future.month), "year": str(future.year)})
+    year = now.year + now.month // 12
+    month = now.month % 12 + 1
+    response = client.get(reverse("bills-list"), {"source": "1688888888", "month": str(month), "year": str(year)})
     assert response.status_code == 400
 
 
-def bill_response_invalid_period_future_year(client):
+def test_bill_response_invalid_period_future_year(client):
     now = timezone.now()
     response = client.get(reverse("bills-list"), {"source": "1688888888", "month": str(now.month), "year": str(now.year + 1)})
     assert response.status_code == 400
+
+
+def test_bill_response_empty(client):
+    response = client.get(reverse("bills-list"), {"source": "1888888888", "month": "2", "year": "2018"})
+    assert response.status_code == 404
 
 
 def test_bill_response_single(client):

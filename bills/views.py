@@ -49,6 +49,10 @@ class BillInformationViewSet(viewsets.ReadOnlyModelViewSet):
         source = request.query_params.get("source")
         if not source:
             return Response("Source is required", 400)
+        try:
+            int(source)
+        except ValueError:
+            return Response("Source is invalid", 400)
 
         month = request.query_params.get("month")
         year = request.query_params.get("year")
@@ -68,6 +72,9 @@ class BillInformationViewSet(viewsets.ReadOnlyModelViewSet):
         queryset = BillInformation.objects.all()
         queryset = queryset.filter(source__source=source, end__year=year, end__month=month)
         serializer = BillInformationSerializer(queryset, many=True)
+
+        if len(serializer.data) == 0:
+            return Response("Nothing found in the period for the given source", 404)
 
         billing = {"source": source,
                    "period": str(month) + "/" + str(year),
